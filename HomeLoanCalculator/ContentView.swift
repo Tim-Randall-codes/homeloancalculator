@@ -109,13 +109,88 @@ struct PrincipalnYears: View {
 }
 
 struct MonthlyRepay: View {
+    @State var monthlyString: String = ""
+    @State var rateString: String = ""
+    @State var yearsString: String = ""
+    @State var monthly: Float = 0
+    @State var rate: Float = 0
+    @State var years: Float = 0
+    @State var total: Float = 0
+    @State var interest: Float = 0
+    @State var principal: Float = 0
+    @State  var displayMessage: String = ""
+    @State var letCalculate: Bool = true
     var body: some View {
         ZStack{
             Background()
             VStack{
-                Text("Hello world").padding()
+                Text(displayMessage).padding()
+                Results(total: total, interest: interest, monthly: monthly)
+                Text("The principal's amount is: \(principal)")
+                HStack{
+                    Text("Monthly payment: ").padding()
+                    TextField("Enter your desired monthly", text: $monthlyString)
+                }
+                HStack{
+                    Text("Interest rate: ").padding()
+                    TextField("Enter the interest rate here", text: $rateString)
+                }
+                HStack{
+                    Text("Years: ").padding()
+                    TextField("Enter the amount of years here", text: $yearsString)
+                }
+                Button(action: {
+                    rate = checkInput(stringVariable: rateString)
+                    years = checkInput(stringVariable: yearsString)
+                    monthly = checkInput(stringVariable: monthlyString)
+                    if letCalculate == true {
+                        displayMessage = ""
+                        rate = (rate / 12)/100
+                        years = years * 12
+                        total = calculateTotal(m: monthly, n: years)
+                        principal = calculatePrincipal(t: total, r: rate, n: years)
+                        interest = total - principal
+                    }
+                }, label: {
+                    buttons(input: "Calculate")
+                })
+                Button(action: {
+                    monthlyString = ""
+                    rateString = ""
+                    yearsString = ""
+                    principal = 0
+                    rate = 0
+                    years = 0
+                    total = 0
+                    interest = 0
+                    monthly = 0
+                    displayMessage = ""
+                }, label: {
+                    buttons(input: "Clear")
+                })
             }.navigationTitle("Monthlies")
         }
+    }
+    func checkInput (stringVariable: String) -> Float {
+        let floatOutput: Float = Float(stringVariable) ?? 0
+        if floatOutput == 0 {
+            displayMessage = "Please enter only numbers greater than zero into all three fields"
+            letCalculate = false
+        }
+        else {
+            letCalculate = true
+        }
+        return floatOutput
+    }
+    func calculateTotal (m: Float, n: Float) -> Float {
+        var total: Float = 0
+        total = m * n
+        return total
+    }
+    func calculatePrincipal (t: Float, r: Float, n: Float) -> Float {
+        var principal: Float = 0
+        principal = t / pow(1 + r, n)
+        return principal
     }
 }
 
