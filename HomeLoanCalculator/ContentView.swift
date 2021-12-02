@@ -31,12 +31,12 @@ struct PrincipalnYears: View {
     @State var principalString: String = ""
     @State var rateString: String = ""
     @State var yearsString: String = ""
-    @State var principal: Float = 0
-    @State var rate: Float = 0
-    @State var years: Float = 0
-    @State var total: Float = 0
-    @State var interest: Float = 0
-    @State var monthly: Float = 0
+    @State var principal: Float = 0.0
+    @State var rate: Float = 0.0
+    @State var years: Float = 0.0
+    @State var total: Float = 0.0
+    @State var interest: Float = 0.0
+    @State var monthly: Float = 0.0
     @State  var displayMessage: String = ""
     @State var letCalculate: Bool = true
     var body: some View {
@@ -44,7 +44,7 @@ struct PrincipalnYears: View {
             Background()
             VStack{
                 Text(displayMessage).padding()
-                Results(total: total, interest: interest, monthly: monthly)
+                Results(totalD: total, interestD: interest, monthlyD: monthly)
                 HStack {
                     Text("Principal: ").padding()
                     TextField("Enter your principal here", text: $principalString).padding()
@@ -64,7 +64,7 @@ struct PrincipalnYears: View {
                     years = checkInput(stringVariable: yearsString)
                     if letCalculate == true {
                         displayMessage = ""
-                        rate /= 100
+                        rate = rate * 0.01
                         total = interestFormula(p: principal, n: years, r: rate)
                         interest = total - principal
                         monthly = total / (years * 12)
@@ -91,8 +91,9 @@ struct PrincipalnYears: View {
         }
     }
     func interestFormula(p: Float, n: Float, r: Float) -> Float {
-        var t: Float = 0
-        t = pow(p * (1 + r), n)
+        var t: Float = 0.0
+        t = p * pow((1.0 + r), n)
+        
         return t
     }
     func checkInput (stringVariable: String) -> Float {
@@ -125,8 +126,8 @@ struct MonthlyRepay: View {
             Background()
             VStack{
                 Text(displayMessage).padding()
-                Results(total: total, interest: interest, monthly: monthly)
-                Text("The principal's amount is: \(principal)")
+                Results(totalD: total, interestD: interest, monthlyD: monthly)
+                Text("The principal's amount is: \(String(format: "%.2f",principal))")
                 HStack{
                     Text("Monthly payment: ").padding()
                     TextField("Enter your desired monthly", text: $monthlyString)
@@ -214,13 +215,13 @@ struct Background: View {
 }
 
 struct Results: View {
-    var total: Float
-    var interest: Float
-    var monthly: Float
+    var totalD: Float
+    var interestD: Float
+    var monthlyD: Float
     var body: some View {
-        Text("The total paid is: \(String(format: "%.2f",total)).").padding()
-        Text("The interest paid is: \(String(format: "%.2f",interest))").padding()
-        Text("The monthly repayment is: \(String(format: "%.2f",monthly))").padding()
+        Text("The total paid is: \(String(format: "%.2f",totalD)).").padding()
+        Text("The interest paid is: \(String(format: "%.2f",interestD))").padding()
+        Text("The monthly repayment is: \(String(format: "%.2f",monthlyD))").padding()
     }
 }
 
